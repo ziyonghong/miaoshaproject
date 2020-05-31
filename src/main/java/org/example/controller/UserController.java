@@ -1,5 +1,7 @@
 package org.example.controller;
 
+import org.example.error.BusinessException;
+import org.example.error.EmBusinessError;
 import org.example.response.CommonReturnType;
 import org.example.service.UserService;
 import org.example.service.model.UserModel;
@@ -17,9 +19,13 @@ public class UserController {
 
     @RequestMapping("/get")
     @ResponseBody
-    public CommonReturnType getUser(@RequestParam(name = "id") Integer id) {
+    public CommonReturnType getUser(@RequestParam(name = "id") Integer id) throws BusinessException {
         //调用service服务获取对应id的用户对象并返回给前端
         UserModel userModel=userService.getUserById(id);
+     //若获取的对应用户信息不存在
+        if(userModel==null){
+            throw new BusinessException(EmBusinessError.USER_NOT_EXIST);
+        }
         return CommonReturnType.create(userModel);
     }
 }
